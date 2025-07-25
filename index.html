@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FramesQRsystem Attendance</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+      background-color: #0077cc; /* Blue background */
+      color: #ffffff;
+    }
+    h1 {
+      color: #ffffff;
+    }
+    #preview {
+      border: 4px solid #ffffff;
+      border-radius: 10px;
+      width: 320px;
+      height: 240px;
+    }
+    #log {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #00ffcc;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+</head>
+<body>
+  <h1>🖼️ FramesQRsystem</h1>
+  <p>Scan your QR code to mark attendance</p>
+  <video id="preview"></video>
+  <div id="log">Status: Ready</div>
+
+  <script>
+    const preview = document.getElementById('preview');
+    const log = document.getElementById('log');
+
+    let scanner = new Instascan.Scanner({ video: preview });
+    scanner.addListener('scan', scanned => {
+      const timestamp = new Date().toLocaleString();
+      log.innerText = `✅ Attendance Recorded: ${scanned} at ${timestamp}`;
+
+      // Save to localStorage
+      localStorage.setItem(`FramesQR_${timestamp}`, scanned);
+    });
+
+    Instascan.Camera.getCameras().then(cameras => {
+      if (cameras.length > 0) {
+        scanner.start(cameras[0]);
+      } else {
+        log.innerText = "🚫 No camera found!";
+      }
+    }).catch(error => {
+      console.error(error);
+      log.innerText = "⚠️ Error accessing camera";
+    });
+  </script>
+</body>
+</html>
